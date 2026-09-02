@@ -1,75 +1,36 @@
-# Nuxt Minimal Starter
+# Site Yönetim Paneli
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+mosstar.com.tr için geliştirilen apartman/site yönetim uygulaması. Aidat tahakkuku, borç/ödeme takibi, sakin borç sorgulama, gider yönetimi ve raporlama (PDF/Excel) içerir.
 
-## Setup
+## Stack
 
-Make sure to install dependencies:
+- [Nuxt 4](https://nuxt.com) + [NuxtHub](https://hub.nuxt.com) (Cloudflare Workers'a edge deploy)
+- [Drizzle ORM](https://orm.drizzle.team) + Cloudflare D1
+- [Better Auth](https://better-auth.com) — admin oturum yönetimi
+- [Nuxt UI](https://ui.nuxt.com)
+- PDF üretimi: `pdf-lib`, Excel export: `xlsx`
+- E-posta bildirimleri: [Resend](https://resend.com) (opsiyonel)
+
+## Kurulum
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+cp .env.example .env   # değerleri doldur
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Geliştirme
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+npm run dev             # http://localhost:3000
+npm run test            # vitest
+npm run db:generate     # drizzle migration üret
+npm run db:studio       # drizzle studio
 ```
 
-## Production
-
-Build the application for production:
+## Build / Deploy
 
 ```bash
-# npm
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+NuxtHub üzerinden Cloudflare Workers'a deploy edilir.
