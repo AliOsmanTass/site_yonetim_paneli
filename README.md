@@ -1,6 +1,6 @@
 # Site Yönetim Paneli
 
-mosstar.com.tr için geliştirilen apartman/site yönetim uygulaması. Aidat tahakkuku, borç/ödeme takibi, sakin borç sorgulama, gider yönetimi ve raporlama (PDF/Excel) içerir.
+Geliştirilen apartman/site yönetim uygulaması. Aidat tahakkuku, borç/ödeme takibi, sakin borç sorgulama, gider yönetimi ve raporlama (PDF/Excel) içerir.
 
 ## Stack
 
@@ -15,7 +15,7 @@ mosstar.com.tr için geliştirilen apartman/site yönetim uygulaması. Aidat tah
 
 ```bash
 npm install
-cp .env.example .env   # değerleri doldur
+cp .env.example .env   
 ```
 
 ## Geliştirme
