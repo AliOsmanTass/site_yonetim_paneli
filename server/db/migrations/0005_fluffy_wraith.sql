@@ -1,0 +1,1 @@
+ALTER TABLE `debts` ADD `source_payment_id` integer REFERENCES payments(id);

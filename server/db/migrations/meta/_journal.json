@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1783581213504,
+      "tag": "0000_messy_cloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1783924059701,
+      "tag": "0001_romantic_purple_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783925634952,
+      "tag": "0002_unit_contacts_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1783928538695,
+      "tag": "0003_tranquil_ben_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1783965105364,
+      "tag": "0004_overjoyed_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1785870005651,
+      "tag": "0005_fluffy_wraith",
+      "breakpoints": true
+    }
+  ]
+}

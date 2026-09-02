@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/* Nötr yüzeyler soğuk gri-mavi — primary yeşil tek başına vurgu
+   rengi olarak kalsın diye zemin/kart/kenarlıklar renkli değil, temiz. */
+:root, .light {
+  --ui-bg: #ffffff;
+  --ui-bg-muted: #f1f5f9;
+  --ui-bg-elevated: #e2e8f0;
+  --ui-bg-accented: #cbd5e1;
+  --ui-border: #e2e8f0;
+  --ui-border-muted: #e2e8f0;
+  --ui-border-accented: #cbd5e1;
+}
+
+.dark {
+  --ui-bg: #0f172a;
+  --ui-bg-muted: #1e293b;
+  --ui-bg-elevated: #1e293b;
+  --ui-bg-accented: #334155;
+  --ui-border: #1e293b;
+  --ui-border-muted: #334155;
+  --ui-border-accented: #334155;
+}
+
+/* Native button elemanları, tarayıcıda varsayılan
+   olarak el işareti almıyor — burada tüm tıklanabilir butonlara
+   ekliyoruz, devre dışı olanlar hariç. */
+button:not(:disabled) {
+  cursor: pointer;
+}

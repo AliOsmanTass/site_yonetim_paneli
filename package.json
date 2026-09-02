@@ -1,0 +1,35 @@
+{
+  "name": "site-yo-netim",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "@nuxt/ui": "^4.9.0",
+    "@nuxthub/core": "^0.10.7",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "better-auth": "^1.6.23",
+    "drizzle-orm": "^0.45.2",
+    "nuxt": "^4.4.8",
+    "pdf-lib": "^1.17.1",
+    "vue": "^3.5.39",
+    "vue-router": "^5.1.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.11.1",
+    "drizzle-kit": "^0.31.10",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.107.1"
+  }
+}

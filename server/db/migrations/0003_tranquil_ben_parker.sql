@@ -1,0 +1,1 @@
+ALTER TABLE `units` ADD `is_virtual` integer DEFAULT false NOT NULL;
