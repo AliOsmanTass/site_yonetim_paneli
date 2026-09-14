@@ -1,0 +1,1 @@
+ALTER TABLE `site_settings` ADD `manager_stipend_offset_aidat` integer DEFAULT true NOT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE `units` ADD `is_closed` integer DEFAULT false NOT NULL;

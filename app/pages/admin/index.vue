@@ -14,6 +14,7 @@ interface UnitRow {
   blockName: string
   number: string
   isVirtual: boolean
+  isClosed: boolean
   malikFirstName: string | null
   malikLastName: string | null
   malikPhone: string | null
@@ -342,6 +343,9 @@ async function deleteUnit(unit: UnitRow) {
               {{ unit.number }}
               <UBadge v-if="unit.isVirtual" color="neutral" variant="subtle" size="sm" class="ml-1">
                 Sanal
+              </UBadge>
+              <UBadge v-if="unit.isClosed" color="error" variant="subtle" size="sm" class="ml-1">
+                Kapalı
               </UBadge>
             </td>
             <td class="py-2">

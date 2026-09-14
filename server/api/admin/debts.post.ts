@@ -37,6 +37,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDrizzle()
+
+  if (body.unitId) {
+    const [targetUnit] = await db.select({ isClosed: tables.units.isClosed }).from(tables.units).where(eq(tables.units.id, body.unitId))
+    if (targetUnit?.isClosed) {
+      throw createError({ statusCode: 409, statusMessage: 'Bu sanal dairenin hesabı kapatılmış, yeni borç eklenemez.' })
+    }
+  }
+
   const today = new Date().toISOString().slice(0, 10)
   const title = body.title.trim()
 

@@ -8,6 +8,7 @@ interface SiteSettingsPayload {
   latePenaltyMonthlyRate: number
   managerStipend?: number | null
   managerUnitId?: number | null
+  managerStipendOffsetAidat?: boolean
   assistantStipend?: number | null
   assistantUnitId?: number | null
 }
@@ -31,6 +32,7 @@ export default defineEventHandler(async (event) => {
     latePenaltyMonthlyRate: body.latePenaltyMonthlyRate,
     managerStipend: body.managerStipend ?? null,
     managerUnitId: body.managerUnitId ?? null,
+    managerStipendOffsetAidat: body.managerStipendOffsetAidat ?? true,
     assistantStipend: body.assistantStipend ?? null,
     assistantUnitId: body.assistantUnitId ?? null
   }

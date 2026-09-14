@@ -35,21 +35,41 @@ interface UnitRow {
   id: number
   blockName: string
   number: string
+  isVirtual: boolean
+  isClosed: boolean
 }
 
 const sessionHeaders = import.meta.server ? useRequestHeaders(['cookie']) : undefined
 const { data: authSession } = await authClient.getSession({ fetchOptions: { headers: sessionHeaders } })
-// Yardımcı yönetici salt okunur — butonlar burada gizlenir 
+// Yardımcı yönetici salt okunur — butonlar burada gizlenir
 const isReadOnly = computed(() => authSession?.user?.role === 'assistant')
 
 const { data: statement, refresh: refreshStatement } = await useFetch<StatementResponse>(`/api/admin/units/${unitId}/statement`)
 const { data: debtTypes, refresh: refreshDebtTypes } = await useFetch<DebtType[]>('/api/admin/debt-types', { default: () => [] })
-const { data: units } = await useFetch<UnitRow[]>('/api/admin/units', { default: () => [] })
+const { data: units, refresh: refreshUnits } = await useFetch<UnitRow[]>('/api/admin/units', { default: () => [] })
 
-const unitLabel = computed(() => {
-  const unit = units.value?.find((u) => u.id === unitId)
-  return unit ? `${unit.blockName}-${unit.number}` : `#${unitId}`
-})
+const unit = computed(() => units.value?.find((u) => u.id === unitId))
+const unitLabel = computed(() => (unit.value ? `${unit.value.blockName}-${unit.value.number}` : `#${unitId}`))
+
+// --- Sanal daire hesabını kapat/aç ---
+const closingUnit = ref(false)
+const closeError = ref<string | null>(null)
+
+async function toggleClosed() {
+  if (!unit.value) return
+  const nextClosed = !unit.value.isClosed
+  if (nextClosed && !confirm(`${unitLabel.value} sanal dairesinin hesabı kapatılsın mı? Kapalıyken yeni borç/ödeme eklenemez.`)) return
+  closingUnit.value = true
+  closeError.value = null
+  try {
+    await $fetch('/api/admin/units-toggle-closed', { method: 'POST', body: { unitId, closed: nextClosed } })
+    await refreshUnits()
+  } catch (e) {
+    closeError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage || 'İşlem yapılamadı.'
+  } finally {
+    closingUnit.value = false
+  }
+}
 
 function formatCurrency(value: number) {
   return `${value.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺`
@@ -335,14 +355,33 @@ async function confirmPayment() {
 
 <template>
   <div class="space-y-6">
-    <div>
-      <h1 class="text-2xl font-bold">
-        {{ unitLabel }} — Borç Detayı
-      </h1>
-      <p class="text-gray-500">
-        Ekstre, borç ekleme, ödeme girişi.
-      </p>
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h1 class="flex items-center gap-2 text-2xl font-bold">
+          {{ unitLabel }} — Borç Detayı
+          <UBadge v-if="unit?.isVirtual" color="neutral" variant="subtle">
+            Sanal Daire
+          </UBadge>
+          <UBadge v-if="unit?.isClosed" color="error" variant="subtle">
+            Kapalı
+          </UBadge>
+        </h1>
+        <p class="text-gray-500">
+          Ekstre, borç ekleme, ödeme girişi.
+        </p>
+      </div>
+      <UButton
+        v-if="unit?.isVirtual && !isReadOnly"
+        :color="unit.isClosed ? 'neutral' : 'error'"
+        variant="outline"
+        :loading="closingUnit"
+        @click="toggleClosed"
+      >
+        {{ unit.isClosed ? 'Hesabı Yeniden Aç' : 'Hesabı Kapat' }}
+      </UButton>
     </div>
+
+    <UAlert v-if="closeError" color="error" variant="subtle" :title="closeError" />
 
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
       <UCard>
@@ -380,10 +419,10 @@ async function confirmPayment() {
     </div>
 
     <div class="flex flex-wrap gap-2">
-      <UButton v-if="!isReadOnly" :disabled="!debtTypes?.length" @click="openCreateDebtModal">
+      <UButton v-if="!isReadOnly" :disabled="!debtTypes?.length || unit?.isClosed" @click="openCreateDebtModal">
         + Borç Ekle
       </UButton>
-      <UButton v-if="!isReadOnly" color="neutral" variant="outline" @click="openPaymentModal">
+      <UButton v-if="!isReadOnly" color="neutral" variant="outline" :disabled="unit?.isClosed" @click="openPaymentModal">
         + Ödeme Gir
       </UButton>
       <UButton :to="`/api/admin/units/${unitId}/statement-export?format=pdf`" target="_blank" color="neutral" variant="outline" icon="i-lucide-file-text">

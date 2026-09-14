@@ -123,4 +123,25 @@ describe('runMonthlyAccrual', () => {
     const allocations = await db.select().from(tables.paymentAllocations)
     expect(allocations).toHaveLength(0)
   })
+
+  // Yönetici daire sahibi olsa bile, "huzur hakkı aidattan düşülsün" çentiği
+  // kapalıysa otomatik mahsup yapılmamalı — sadece kasa gideri kalmalı.
+  it('managerStipendOffsetAidat kapalıysa daire sahibi yönetici için de mahsup yapılmaz', async () => {
+    await db
+      .update(tables.siteSettings)
+      .set({ managerStipend: 2000, managerUnitId: unitId, managerStipendOffsetAidat: false })
+      .where(eq(tables.siteSettings.id, 1))
+
+    await runMonthlyAccrual(db, '2026-07-01')
+
+    const [debt] = await db.select().from(tables.debts).where(eq(tables.debts.unitId, unitId))
+    expect(debt.status).toBe('open')
+
+    const allocations = await db.select().from(tables.paymentAllocations)
+    expect(allocations).toHaveLength(0)
+
+    const cashOut = await db.select().from(tables.cashTransactions).where(eq(tables.cashTransactions.direction, 'out'))
+    expect(cashOut).toHaveLength(1)
+    expect(cashOut[0].amount).toBe(2000)
+  })
 })

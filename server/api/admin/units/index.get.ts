@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
       blockName: tables.blocks.name,
       number: tables.units.number,
       isVirtual: tables.units.isVirtual,
+      isClosed: tables.units.isClosed,
       malikFirstName: malikContacts.firstName,
       malikLastName: malikContacts.lastName,
       malikPhone: malikContacts.phone,

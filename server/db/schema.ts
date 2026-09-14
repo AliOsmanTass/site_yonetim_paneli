@@ -63,7 +63,11 @@ export const siteSettings = sqliteTable('site_settings', {
   managerStipend: real('manager_stipend'),
   assistantStipend: real('assistant_stipend'),
   managerUnitId: integer('manager_unit_id').references(() => units.id),
-  assistantUnitId: integer('assistant_unit_id').references(() => units.id)
+  assistantUnitId: integer('assistant_unit_id').references(() => units.id),
+  // İşaretliyse yöneticinin huzur hakkı, kendi dairesinin açık borcundan
+  // otomatik düşülür (bkz. accrual.ts → offsetStipendAgainstUnitDebt).
+  // Kapalıysa huzur hakkı sadece kasa gideri olarak kalır, mahsup edilmez.
+  managerStipendOffsetAidat: integer('manager_stipend_offset_aidat', { mode: 'boolean' }).notNull().default(true)
 })
 
 // Oran/ayar değişikliklerinin tarihçesi — geçmişe dönük hesaplamalar
@@ -86,11 +90,15 @@ export const blocks = sqliteTable('blocks', {
 //
 // isVirtual: malik değişince eski açık borcu taşımak için açılan gölge daire.
 // Normal listede görünmez, sadece borç takibi için var.
+//
+// isClosed: sanal dairenin hesabı yönetici tarafından kapatılmış mı — sadece
+// sanal dairelerde anlamlı. Kapalıyken yeni borç/ödeme eklenemez.
 export const units = sqliteTable('units', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   blockId: integer('block_id').notNull().references(() => blocks.id),
   number: text('number').notNull(),
-  isVirtual: integer('is_virtual', { mode: 'boolean' }).notNull().default(false)
+  isVirtual: integer('is_virtual', { mode: 'boolean' }).notNull().default(false),
+  isClosed: integer('is_closed', { mode: 'boolean' }).notNull().default(false)
 }, (t) => [
   uniqueIndex('units_block_number_unique').on(t.blockId, t.number)
 ])

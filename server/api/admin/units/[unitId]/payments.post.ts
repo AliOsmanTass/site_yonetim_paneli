@@ -23,6 +23,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDrizzle()
+
+  const [targetUnit] = await db.select({ isClosed: tables.units.isClosed }).from(tables.units).where(eq(tables.units.id, unitId))
+  if (targetUnit?.isClosed) {
+    throw createError({ statusCode: 409, statusMessage: 'Bu sanal dairenin hesabı kapatılmış, yeni ödeme eklenemez.' })
+  }
+
   const openDebts = await getOpenDebtsForUnit(db, unitId)
   const rateSegments = await getRateSegments(db)
 

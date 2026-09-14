@@ -29,6 +29,22 @@ const STATUS_LABELS: Record<AnnouncementStatus, string> = { draft: 'Taslak', act
 const STATUS_COLORS: Record<AnnouncementStatus, 'neutral' | 'success' | 'warning'> = { draft: 'neutral', active: 'success', passive: 'warning', archived: 'neutral' }
 const STATUS_OPTIONS = (Object.keys(STATUS_LABELS) as AnnouncementStatus[]).map((value) => ({ label: STATUS_LABELS[value], value }))
 
+// --- Tür filtresi: Tümü / Duyuru (manuel) / Demirbaş (otomatik oluşan) ---
+type TypeFilter = 'all' | 'manual' | 'fixture'
+const typeFilter = ref<TypeFilter>('all')
+const TYPE_FILTER_OPTIONS: { label: string, value: TypeFilter }[] = [
+  { label: 'Tümü', value: 'all' },
+  { label: 'Duyuru', value: 'manual' },
+  { label: 'Demirbaş', value: 'fixture' }
+]
+
+const filteredAnnouncements = computed(() => {
+  const list = announcements.value ?? []
+  if (typeFilter.value === 'manual') return list.filter((a) => !a.expenseId)
+  if (typeFilter.value === 'fixture') return list.filter((a) => !!a.expenseId)
+  return list
+})
+
 // --- Duyuru Ekle / Düzenle ---
 const isModalOpen = ref(false)
 const modalMode = ref<'create' | 'edit'>('create')
@@ -110,8 +126,15 @@ async function submit() {
           </UButton>
         </div>
       </template>
-      <div v-if="announcements?.length" class="divide-y divide-gray-100 dark:divide-gray-800">
-        <div v-for="a in announcements" :key="a.id" class="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
+      <URadioGroup
+        v-model="typeFilter"
+        orientation="horizontal"
+        :items="TYPE_FILTER_OPTIONS"
+        class="mb-4"
+      />
+
+      <div v-if="filteredAnnouncements.length" class="divide-y divide-gray-100 dark:divide-gray-800">
+        <div v-for="a in filteredAnnouncements" :key="a.id" class="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
           <div>
             <p class="font-medium">
               {{ a.title }}
@@ -133,6 +156,9 @@ async function submit() {
           </UButton>
         </div>
       </div>
+      <p v-else-if="announcements?.length" class="py-8 text-center text-sm text-gray-500">
+        Bu filtreye uygun duyuru yok.
+      </p>
       <p v-else class="py-8 text-center text-sm text-gray-500">
         Henüz duyuru yok.
       </p>

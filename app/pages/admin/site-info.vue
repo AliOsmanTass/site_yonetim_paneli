@@ -12,6 +12,7 @@ interface SiteSettings {
   latePenaltyMonthlyRate: number
   managerStipend: number | null
   managerUnitId: number | null
+  managerStipendOffsetAidat: boolean
   assistantStipend: number | null
   assistantUnitId: number | null
 }
@@ -48,6 +49,7 @@ const form = reactive({
   latePenaltyMonthlyRate: settings.value?.latePenaltyMonthlyRate ?? 0.05,
   managerStipend: settings.value?.managerStipend ?? undefined,
   managerUnitId: settings.value?.managerUnitId ?? undefined,
+  managerStipendOffsetAidat: settings.value?.managerStipendOffsetAidat ?? true,
   assistantStipend: settings.value?.assistantStipend ?? undefined,
   assistantUnitId: settings.value?.assistantUnitId ?? undefined
 })
@@ -207,6 +209,12 @@ async function removeBlock(id: number) {
               class="w-full"
             />
           </UFormField>
+          <UCheckbox
+            v-if="managerIsOwner"
+            v-model="form.managerStipendOffsetAidat"
+            label="Huzur hakkı aidattan düşülsün"
+            help="İşaretliyse her ay aidat tahakkuk ettiğinde, yöneticinin huzur hakkı aynı miktarda ödeme olarak otomatik girilip borcundan düşülür. İşaretli değilse huzur hakkı sadece kasa gideri olarak kaydedilir."
+          />
         </div>
         <div class="space-y-2">
           <UFormField label="Yardımcı yönetici aylık tutar (₺)">

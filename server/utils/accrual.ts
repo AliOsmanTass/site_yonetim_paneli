@@ -80,7 +80,8 @@ export async function runMonthlyAccrual(db: Database, referenceDate: string): Pr
   return { accrued, skipped, stipendsProcessed }
 }
 
-// Huzur hakkı tanımlıysa kasa gideri yazar; alıcı bir dairenin sahibiyse borcundan düşer.
+// Huzur hakkı tanımlıysa kasa gideri yazar; alıcı bir dairenin sahibiyse ve
+// mahsup açıksa (offsetAidat) borcundan düşer.
 async function processStipends(
   db: Database,
   settings: typeof tables.siteSettings.$inferSelect,
@@ -92,9 +93,10 @@ async function processStipends(
     .where(and(eq(tables.expenses.type, 'stipend'), eq(tables.expenses.expenseDate, referenceDate)))
   const alreadyProcessed = new Set(existingStipends.map((e: { title: string }) => e.title))
 
-  const stipends: { title: string; amount: number | null; unitId: number | null }[] = [
-    { title: 'Huzur Hakkı — Yönetici', amount: settings.managerStipend, unitId: settings.managerUnitId },
-    { title: 'Huzur Hakkı — Yardımcı Yönetici', amount: settings.assistantStipend, unitId: settings.assistantUnitId }
+  const stipends: { title: string; amount: number | null; unitId: number | null; offsetAidat: boolean }[] = [
+    { title: 'Huzur Hakkı — Yönetici', amount: settings.managerStipend, unitId: settings.managerUnitId, offsetAidat: settings.managerStipendOffsetAidat },
+    // Yardımcı yönetici için mahsup her zaman otomatik — bkz. site-info.vue'daki not.
+    { title: 'Huzur Hakkı — Yardımcı Yönetici', amount: settings.assistantStipend, unitId: settings.assistantUnitId, offsetAidat: true }
   ]
 
   let processed = 0
@@ -117,7 +119,7 @@ async function processStipends(
       description: stipend.title
     })
 
-    if (stipend.unitId) {
+    if (stipend.unitId && stipend.offsetAidat) {
       await offsetStipendAgainstUnitDebt(db, stipend.unitId, stipend.amount, referenceDate, expense.id)
     }
 
