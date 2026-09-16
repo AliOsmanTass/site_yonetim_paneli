@@ -1,6 +1,10 @@
 // Basit tablo raporları için genel üretici
 import { PDFDocument, rgb } from 'pdf-lib'
-import * as XLSX from 'xlsx'
+// 'xlsx' paketinin CJS girişi (xlsx.js) cpexcel.js'i koşulsuz require ediyor;
+// Nitro bunu paketlerken build makinesinin mutlak yoluyla bundle'a gömüp
+// Vercel'de ERR_MODULE_NOT_FOUND'a yol açıyordu. ESM girişinde (xlsx.mjs)
+// bu sorun hiç yok, aynı API'yi sağlıyor.
+import * as XLSX from 'xlsx/xlsx.mjs'
 import { formatCurrency, formatDate } from './report-format'
 import { embedTurkishFonts } from './pdf-fonts'
 

@@ -28,12 +28,6 @@ export default defineNuxtConfig({
       '0 0 1 * *': ['monthly-accrual'],
       // Her gün — askı süresi dolan duyuruları arşive taşır
       '0 3 * * *': ['daily-maintenance']
-    },
-    // xlsx paketi cpexcel.js'i çalışma zamanında koşullu require ediyor;
-    // Nitro bunu bundle'a alıp ESM import'a çevirince Vercel'de dosya
-    // bulunamıyor. External bırakınca gerçek node_modules'ten çözülüyor.
-    externals: {
-      external: ['xlsx']
     }
   }
 })

@@ -1,6 +1,7 @@
 // Daire hesap ekstresi — PDF ve Excel üretimi.
 import { PDFDocument, rgb, type PDFFont } from 'pdf-lib'
-import * as XLSX from 'xlsx'
+// bkz. tabular-report.ts — cpexcel.js/Vercel sorunundan kaçınmak için ESM girişi
+import * as XLSX from 'xlsx/xlsx.mjs'
 import type { StatementRow } from './statement'
 import { formatCurrency, formatDate } from './report-format'
 import { embedTurkishFonts } from './pdf-fonts'
